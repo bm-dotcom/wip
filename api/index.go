@@ -1,36 +1,27 @@
+// api/index.go
 package handler
 
 import (
 	"html/template"
 	"log"
 	"net/http"
-	"os"
+	"path/filepath"
 )
 
-var tmpl = template.Must(template.ParseGlob("../templates/*.html"))
+var tmpl = template.Must(template.ParseGlob(filepath.Join("templates", "*.html")))
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	// Only allow exact root path
-	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+	// Accept root path in any form Vercel sends it
+	if r.URL.Path == "/" || r.URL.Path == "" {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		err := tmpl.ExecuteTemplate(w, "layout.html", nil)
+		if err != nil {
+			http.Error(w, "Template error", 500)
+			log.Printf("ExecuteTemplate error: %v", err)
+		}
 		return
 	}
 
-	// Optional: cache template parse in dev (Vercel cold starts anyway)
-	if os.Getenv("VERCEL") == "1" {
-		// Re-parse on cold start is fine — Vercel does it once per instance
-		t, err := template.ParseGlob("../templates/*.html")
-		if err != nil {
-			http.Error(w, "Template parse error", 500)
-			log.Printf("Template parse error: %v", err)
-			return
-		}
-		tmpl = template.Must(t, nil)
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := tmpl.ExecuteTemplate(w, "layout.html", nil); err != nil {
-		http.Error(w, "Internal Server Error", 500)
-		log.Printf("Template execution failed: %v", err)
-	}
+	// Everything else = 404
+	http.NotFound(w, r)
 }
