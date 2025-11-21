@@ -4,6 +4,7 @@ package handler
 import (
 	"embed"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -13,12 +14,11 @@ var templateFS embed.FS
 var tmpl = template.Must(template.New("").ParseFS(templateFS, "templates/*.html"))
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	// Accept both "" and "/" – Vercel sometimes sends empty string
 	if r.URL.Path == "/" || r.URL.Path == "" {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if err := tmpl.ExecuteTemplate(w, "layout.html", nil); err != nil {
-			http.Error(w, "template error", 500)
-			return
+			log.Printf("template error: %v", err)
+			http.Error(w, "oops", 500)
 		}
 		return
 	}
