@@ -12,7 +12,7 @@ import (
 var templateFS embed.FS
 
 // Parse all templates from the embedded FS (paths relative to project root)
-var tmpl = template.Must(template.ParseFS(templateFS, "templates/*.html"))
+var tmpl = template.Must(template.ParseFS(templateFS, "template/*.html"))
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 	// Vercel sends "" or "/" for the root domain — accept both
