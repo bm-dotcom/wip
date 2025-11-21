@@ -1,0 +1,33 @@
+{{define "content"}}
+<div class="flex flex-col h-full">
+    <div class="flex-1 relative overflow-hidden">
+        <div id="map" class="absolute inset-0 w-full h-full"></div>
+        <!-- Tiny welcome overlay -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+            <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl text-center max-w-sm mx-4 border border-gray-200/50 dark:border-gray-700/50 pointer-events-auto hover:scale-105 transition-all duration-300">
+                <h1 class="text-3xl md:text-4xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-3 drop-shadow-lg">
+                    Welcome to Monitoring
+                </h1>
+                <p class="text-lg md:text-xl text-gray-700 dark:text-gray-300 font-medium leading-relaxed">
+                    Real-time dashboard ready. Explore your data.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet JS -->
+<script integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var map = L.map('map').setView([40.7128, -74.0060], 10); // NYC example
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        // Marker example
+        L.marker([40.7128, -74.0060]).addTo(map)
+            .bindPopup('Monitoring Site HQ')
+            .openPopup();
+    });
+</script>
+{{end}}
