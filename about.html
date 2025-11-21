@@ -1,0 +1,295 @@
+<!-- ================================================================================================
+ABOUT PAGE TEMPLATE - ABOUT.HTML
+This HTML template follows the same structure as index.html but displays information about the website.
+It uses the same Go template engine and color scheme with identical dark mode functionality.
+
+Template Variables Available:
+- {{.Title}} - Page title (from Go server, typically "About")
+- {{.Content}} - Content text (from Go server, descriptive message)
+
+Color Scheme: Same as homepage
+- Light Mode: Background #FDFDF8, Text #140F0F
+- Dark Mode: Background #140F0F, Text #FDFDF8
+
+Functionality: Identical to homepage
+- Dark mode toggle with localStorage persistence
+- Same responsive design and smooth transitions
+- Navigation button back to homepage
+=============================================================================================== -->
+
+<!-- HTML5 document declaration -->
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- Character encoding for proper text display -->
+    <meta charset="UTF-8">
+
+    <!-- Responsive viewport for mobile compatibility -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Dynamic page title from Go template variable -->
+    <title>{{.Title}}</title>
+
+    <!-- ================================================================================================
+    INLINE STYLESHEET - Same as homepage, different colors for content variety
+    ================================================================================================ -->
+    <style>
+
+        /* ===============================================================================
+        BODY STYLES - Identical color scheme and layout to homepage
+        =============================================================================== */
+        body {
+            /* System font stack for cross-platform consistency */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+            /* Reset margins and padding */
+            margin: 0;
+            padding: 0;
+
+            /* LIGHT MODE COLORS - exact same as homepage */
+            background: #FDFDF8;  /* Light cream/off-white background */
+            color: #140F0F;       /* Very dark brown text */
+
+            /* Full viewport height layout */
+            min-height: 100vh;
+
+            /* Center content using flexbox */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            /* Smooth color transitions between themes */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* DARK MODE STYLES - Applied when body.dark class is present */
+        body.dark {
+            /* DARK MODE COLORS - exact same color values as homepage */
+            background: #140F0F;  /* Very dark brown background */
+            color: #FDFDF8;       /* Light cream text */
+        }
+
+        /* ===============================================================================
+        CONTENT CONTAINER - Centered layout with maximum width
+        =============================================================================== */
+        .container {
+            /* Center all text content */
+            text-align: center;
+
+            /* Constrain width for readability */
+            max-width: 600px;
+
+            /* Padding around content */
+            padding: 2rem;
+        }
+
+        /* ===============================================================================
+        TYPOGRAPHY STYLES - Different sizing from homepage for variety
+        =============================================================================== */
+        .hero {
+            /* Large title size */
+            font-size: 3rem;
+
+            /* Bold weight for importance */
+            font-weight: bold;
+
+            /* Bottom spacing */
+            margin-bottom: 1rem;
+        }
+
+        .content {
+            /* Medium text size for body content */
+            font-size: 1.2rem;
+
+            /* Bottom margin before next element */
+            margin-bottom: 2rem;
+
+            /* Improved line spacing for readability */
+            line-height: 1.6;
+        }
+
+        /* ===============================================================================
+        BUTTON STYLES - Dark/light mode adaptive like homepage
+        =============================================================================== */
+        .btn {
+            /* Block display for button sizing */
+            display: inline-block;
+
+            /* LIGHT MODE COLORS */
+            background: #140F0F;  /* Dark button background */
+            color: #FDFDF8;       /* Light button text */
+
+            /* Button padding */
+            padding: 0.75rem 1.5rem;
+
+            /* Rounded corners */
+            border-radius: 0.25rem;
+
+            /* Remove link underline */
+            text-decoration: none;
+
+            /* Button border */
+            border: 1px solid #140F0F;
+
+            /* Smooth hover transition */
+            transition: all 0.3s ease;
+        }
+
+        /* DARK MODE BUTTON COLORS - Inverted colors */
+        body.dark .btn {
+            background: #FDFDF8;   /* Light background */
+            color: #140F0F;        /* Dark text */
+            border-color: #FDFDF8; /* Light border */
+        }
+
+        /* BUTTON HOVER EFFECTS - Same as homepage */
+        .btn:hover {
+            /* Reduce opacity slightly */
+            opacity: 0.8;
+
+            /* Slight upward movement */
+            transform: translateY(-1px);
+        }
+
+        /* ===============================================================================
+        DARK MODE TOGGLE BUTTON - Absolutely positioned top-right corner
+        =============================================================================== */
+        .toggle {
+            /* Position independent of content flow */
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+
+            /* No visible background */
+            background: none;
+            border: none;
+
+            /* Large emoji/icon size */
+            font-size: 1.5rem;
+
+            /* Pointer cursor for clickability */
+            cursor: pointer;
+
+            /* Clickable area padding */
+            padding: 0.5rem;
+
+            /* Smooth transition for icon changes */
+            transition: all 0.3s ease;
+        }
+
+        /* ===============================================================================
+        FOOTER ATTRIBUTION - Subtle bottom text
+        =============================================================================== */
+        .footer {
+            /* Large top spacing from content */
+            margin-top: 3rem;
+
+            /* Semi-transparent appearance */
+            opacity: 0.7;
+
+            /* Small font size */
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- ================================================================================================
+    DARK MODE TOGGLE BUTTON - Same functionality as homepage
+    ================================================================================================
+    Positioned in top-right corner, calls the same JavaScript toggleDarkMode() function.
+    This ensures theme consistency across all pages.
+    ================================================================================================ -->
+    <button class="toggle" onclick="toggleDarkMode()" id="themeToggle">🌙</button>
+
+    <!-- ================================================================================================
+    MAIN CONTENT AREA - About page specific content
+    ================================================================================================ -->
+    <div class="container">
+
+        <!-- PAGE TITLE - with book emoji to indicate informational content -->
+        <h1 class="hero">📖 About</h1>
+
+        <!-- DYNAMIC CONTENT - inserted by Go server via {{.Content}} template variable -->
+        <p class="content">{{.Content}}</p>
+
+        <!-- ================================================================================================
+        NAVIGATION SECTION - Back button to homepage
+        ================================================================================================ -->
+        <div>
+            <!-- Back navigation button with left arrow symbol -->
+            <a href="/" class="btn">← Back to Home</a>
+        </div>
+
+        <!-- ================================================================================================
+        FOOTER ATTRIBUTION - Similar to homepage but different text
+        ================================================================================================ -->
+        <div class="footer">
+            Simple & Clean • Built with Go
+        </div>
+
+    </div>
+
+    <!-- ================================================================================================
+    JAVASCRIPT SECTION - Identical to homepage for theme consistency
+    ================================================================================================
+    This is the EXACT same JavaScript as the homepage to ensure theme synchronization.
+    When user changes theme on one page, it persists when navigating to other pages.
+    ================================================================================================ -->
+    <script>
+
+        /*
+        function: toggleDarkMode()
+        Purpose: Switches between light/dark themes, identical to homepage
+        Method: CSS class manipulation and localStorage persistence
+        Note: This function must be identical on all pages for consistency
+        */
+        function toggleDarkMode() {
+            // Reference DOM elements
+            const body = document.body;                              // Body element for CSS class toggle
+            const toggle = document.getElementById('themeToggle');  // Theme toggle button
+
+            // Check if dark mode is currently active
+            const isDark = body.classList.contains('dark');         // Class-based state tracking
+
+            if (isDark) {
+                // TRANSITION TO LIGHT MODE
+                body.classList.remove('dark');          // Remove dark theme CSS class
+                toggle.textContent = '🌙';              // Display moon icon for light mode
+                localStorage.setItem('theme', 'light'); // Persist preference in browser storage
+            } else {
+                // TRANSITION TO DARK MODE
+                body.classList.add('dark');             // Add dark theme CSS class
+                toggle.textContent = '☀️';              // Display sun icon for dark mode
+                localStorage.setItem('theme', 'dark');  // Persist preference in browser storage
+            }
+        }
+
+        /*
+        Event Listener: DOMContentLoaded
+        Purpose: Applies saved theme preference when page loads
+        Triggers: After HTML document is fully loaded and parsed
+        */
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Retrieve previously saved theme preference, defaulting to 'light'
+            const savedTheme = localStorage.getItem('theme') || 'light';
+
+            // Get reference to toggle button for icon display
+            const toggle = document.getElementById('themeToggle');
+
+            if (savedTheme === 'dark') {
+                // APPLY DARK THEME FROM STORAGE
+                document.body.classList.add('dark');    // Enable dark mode styling
+                toggle.textContent = '☀️';              // Show sun icon to indicate active dark mode
+            } else {
+                // APPLY LIGHT THEME FROM STORAGE
+                toggle.textContent = '🌙';              // Show moon icon for light mode (default)
+            }
+        });
+
+    </script>
+</body>
+</html>

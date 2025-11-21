@@ -1,0 +1,541 @@
+<!-- ================================================================================================
+HOME PAGE TEMPLATE - INDEX.HTML
+This HTML template is processed by Go's template engine before being sent to the browser.
+Dynamic content is inserted using {{.VariableName}} syntax.
+
+Template Variables Available:
+- {{.Title}} - Page title (from Go server)
+- {{.Message}} - Welcome message (from Go server)
+- {{.Time}} - Current server time (from Go server)
+
+Color Scheme:
+- Light Mode: Background #FDFDF8, Text #140F0F
+- Dark Mode: Background #140F0F, Text #FDFDF8
+
+Functionality:
+- Dark mode toggle with localStorage persistence
+- Responsive design for mobile and desktop
+- Clean, minimal layout with smooth transitions
+=============================================================================================== -->
+
+<!-- HTML5 document declaration - tells browser this is a modern HTML5 document -->
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <!-- Character encoding - ensures proper display of special characters -->
+    <meta charset="UTF-8">
+
+    <!-- Responsive design - makes site mobile-friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Dynamic page title - inserted by Go template engine -->
+    <title>{{.Title}}</title>
+
+    <!-- ================================================================================================
+    STYLESHEET - INLINE CSS (Functionality, Performance, Clean Architecture)
+    ================================================================================================ -->
+    <style>
+        /* ===============================================================================
+        CSS CUSTOM PROPERTIES - Design System Variables
+        =============================================================================== */
+        :root {
+            /* Color System - Exact specification required */
+            --color-light-bg: #FDFDF8;
+            --color-dark-bg: #140F0F;
+            --color-light-text: #140F0F;
+            --color-dark-text: #FDFDF8;
+
+            /* Spacing System - Consistent rhythm (4px base) */
+            --space-xs: 0.25rem;    /*  4px */
+            --space-sm: 0.5rem;     /*  8px */
+            --space-md: 1rem;       /* 16px */
+            --space-lg: 1.5rem;     /* 24px */
+            --space-xl: 2rem;       /* 32px */
+            --space-2xl: 3rem;      /* 48px */
+
+            /* Typography Scale - Consistent sizing */
+            --text-xs: 0.75rem;     /* 12px */
+            --text-sm: 0.875rem;    /* 14px */
+            --text-base: 1rem;      /* 16px */
+            --text-lg: 1.125rem;    /* 18px */
+            --text-xl: 1.25rem;     /* 20px */
+            --text-2xl: 1.5rem;     /* 24px */
+            --text-3xl: 1.875rem;   /* 30px */
+            --text-4xl: 2.25rem;    /* 36px */
+            --text-5xl: 3rem;       /* 48px */
+
+            /* Border Radius - Consistent rounding */
+            --radius-sm: 0.25rem;   /* 4px */
+            --radius-md: 0.375rem;  /* 6px */
+            --radius-lg: 0.5rem;    /* 8px */
+            --radius-xl: 0.75rem;   /* 12px */
+
+            /* Shadows - Subtle depth */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+            /* Transitions - Consistent timing */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.3s ease;
+        }
+
+        /* ===============================================================================
+        RESET & FOUNDATION
+        =============================================================================== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: var(--text-base);
+            line-height: 1.6;
+            color: var(--color-light-text);
+            background: var(--color-light-bg);
+            transition: var(--transition-normal);
+
+            /* Layout: Space for fixed header/footer */
+            min-height: 100vh;
+            padding: 80px 0 60px 0; /* 5rem top + 3.75rem bottom */
+        }
+
+        body.dark {
+            color: var(--color-dark-text);
+            background: var(--color-dark-bg);
+        }
+
+        /* ===============================================================================
+        LAYOUT COMPONENTS - Fixed Positioning
+        =============================================================================== */
+
+        /* Header - Sticky Navigation */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1100;
+
+            background: var(--color-light-bg);
+            border-bottom: 1px solid rgba(20, 15, 15, 0.1);
+            transition: var(--transition-normal);
+        }
+
+        body.dark .site-header {
+            background: var(--color-dark-bg);
+            border-bottom-color: rgba(253, 253, 248, 0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-lg) var(--space-xl);
+        }
+
+        .header-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            margin: 0;
+        }
+
+        /* Footer - Fixed Attribution */
+        .site-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+
+            background: var(--color-light-bg);
+            border-top: 1px solid rgba(20, 15, 15, 0.1);
+            transition: var(--transition-normal);
+        }
+
+        body.dark .site-footer {
+            background: var(--color-dark-bg);
+            border-top-color: rgba(253, 253, 248, 0.1);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-md) var(--space-xl);
+            text-align: center;
+        }
+
+        .footer-text {
+            font-size: var(--text-sm);
+            opacity: 0.7;
+            margin: 0;
+        }
+
+        /* ===============================================================================
+        MAIN CONTENT - Responsive Container
+        =============================================================================== */
+        .container {
+            width: 100%;
+            max-width: 640px; /* 40rem - Optimal reading width */
+            margin: 0 auto;
+            padding: 0 var(--space-lg);
+        }
+
+        /* ===============================================================================
+        TYPOGRAPHY - Consistent sizing using design system
+        =============================================================================== */
+        .hero {
+            font-size: var(--text-5xl);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--space-lg);
+            text-align: center;
+        }
+
+        .message {
+            font-size: var(--text-xl);
+            line-height: 1.6;
+            margin-bottom: var(--space-xl);
+            text-align: center;
+            color: var(--color-light-text);
+        }
+
+        body.dark .message {
+            color: var(--color-dark-text);
+        }
+
+        .time {
+            font-size: var(--text-lg);
+            color: var(--color-light-text);
+            opacity: 0.8;
+            text-align: center;
+            margin: var(--space-lg) 0;
+        }
+
+        body.dark .time {
+            color: var(--color-dark-text);
+        }
+
+        /* ===============================================================================
+        INTERACTION COMPONENTS
+        =============================================================================== */
+
+        /* Navigation Menu */
+        .nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--space-lg);
+            margin: var(--space-xl) 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: var(--space-sm) var(--space-md);
+            color: var(--color-light-text);
+            text-decoration: none;
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
+            font-weight: 500;
+            font-size: var(--text-base);
+        }
+
+        body.dark .nav-link {
+            color: var(--color-dark-text);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--color-dark-bg);
+            color: var(--color-light-text);
+            border-color: var(--color-dark-bg);
+        }
+
+        body.dark .nav-link:hover, body.dark .nav-link.active {
+            background: var(--color-light-bg);
+            color: var(--color-dark-text);
+            border-color: var(--color-light-bg);
+        }
+
+        /* Dark Mode Toggle */
+        .toggle {
+            background: none;
+            border: none;
+            font-size: var(--text-xl);
+            cursor: pointer;
+            padding: var(--space-xs);
+            transition: var(--transition-fast);
+            color: var(--color-light-text);
+        }
+
+        body.dark .toggle {
+            color: var(--color-dark-text);
+        }
+
+        /* ===============================================================================
+        CONTENT SECTIONS
+        =============================================================================== */
+        .section {
+            margin-top: var(--space-xl);
+            padding: var(--space-xl);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark .section {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .section h2 {
+            font-size: var(--text-3xl);
+            font-weight: 600;
+            margin-bottom: var(--space-lg);
+            text-align: center;
+            color: var(--color-light-text);
+        }
+
+        body.dark .section h2 {
+            color: var(--color-dark-text);
+        }
+
+        .time-clock {
+            font-size: var(--text-3xl);
+            font-weight: 700;
+            text-align: center;
+            background: rgba(20, 15, 15, 0.05);
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            color: var(--color-light-text);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(20, 15, 15, 0.08);
+        }
+
+        body.dark .time-clock {
+            background: rgba(253, 253, 248, 0.05);
+            border-color: rgba(253, 253, 248, 0.08);
+        }
+
+        /* ===============================================================================
+        RESPONSIVE DESIGN - Mobile optimization
+        =============================================================================== */
+        @media (max-width: 768px) {
+            :root {
+                --text-5xl: 2.5rem;   /* Reduce hero size */
+                --text-3xl: 1.25rem;  /* Adjust section headers */
+                --space-xl: 1.5rem;   /* Tighter spacing */
+                --space-2xl: 2rem;
+            }
+
+            .container {
+                padding: 0 var(--space-md);
+            }
+
+            .header-container, .footer-container {
+                padding-left: var(--space-md);
+                padding-right: var(--space-md);
+            }
+
+            .nav {
+                gap: var(--space-md);
+            }
+
+            .section {
+                padding: var(--space-lg);
+                margin-top: var(--space-lg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --text-5xl: 2rem;
+                --text-3xl: 1.125rem;
+                --space-lg: 1.25rem;
+            }
+
+            .header-title {
+                font-size: var(--text-xl);
+            }
+
+            .nav-link {
+                padding: var(--space-xs) var(--space-sm);
+                font-size: var(--text-sm);
+            }
+        }
+
+        /* ===============================================================================
+        LEGACY SUPPORT - Remove after full migration
+        =============================================================================== */
+        .footer {
+            display: none; /* Hidden - footer content moved to fixed footer */
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- ================================================================================================
+    STICKY HEADER - Always visible at top of page
+    ================================================================================================ -->
+    <header class="site-header">
+        <div class="header-container">
+            <h1 class="header-title">🚀 Go Webpage</h1>
+            <button class="toggle" onclick="toggleDarkMode()" id="themeToggle" title="Toggle Dark Mode">🌙</button>
+        </div>
+    </header>
+
+    <!-- ================================================================================================
+    MAIN CONTENT CONTAINER
+    ================================================================================================ -->
+    <div class="container">
+
+        <!-- LARGE HERO TITLE - with rocket emoji for visual interest -->
+        <h1 class="hero">🚀 Go Webpage</h1>
+
+        <!-- DYNAMIC WELCOME MESSAGE - comes from Go server via {{.Message}} template variable -->
+        <p class="message">{{.Message}}</p>
+
+        <!-- LIVE SERVER TIME - updated each time page loads via {{.Time}} template variable -->
+        <div class="time">Current server time: {{.Time}}</div>
+
+
+
+        <!-- ================================================================================================
+        NAVIGATION AND FOOTER
+        ================================================================================================ -->
+
+        <!-- Simple Navigation Menu -->
+        <nav class="nav">
+            <a href="#" onclick="showSection('home')" class="nav-link active" id="nav-home">Home</a>
+            <a href="#" onclick="showSection('time')" class="nav-link" id="nav-time">Server Time</a>
+            <a href="#" onclick="showSection('about')" class="nav-link" id="nav-about">About</a>
+        </nav>
+
+        <!-- About Section (hidden by default) -->
+        <div class="section" id="about-section" style="display: none;">
+            <h2>About This Site</h2>
+            <p>This is a simple webpage created with Go and the Fiber web framework. It features light and dark mode, and displays the current server time.</p>
+        </div>
+
+        <!-- Time Section (shown by default) -->
+        <div class="section" id="time-section">
+            <h2>Current Server Time</h2>
+            <div class="time-clock">{{.Time}}</div>
+        </div>
+
+        <!-- FOOTER WITH TECHNICAL CREDIT -->
+        <div class="footer">
+            Built with <strong>Go</strong> and <strong>Fiber</strong> framework
+        </div>
+
+    </div>
+
+    <!-- ================================================================================================
+    FIXED FOOTER - Always visible at bottom of viewport
+    ================================================================================================ -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p class="footer-text">Built with <strong>Go</strong> and <strong>Fiber</strong> framework</p>
+        </div>
+    </footer>
+
+    <!-- ================================================================================================
+    JAVASCRIPT SECTION - Dark Mode Functionality
+    ================================================================================================
+    This JavaScript handles the dark mode toggle functionality.
+    No external libraries - pure vanilla JavaScript for simplicity and performance.
+    ================================================================================================ -->
+    <script>
+
+        /*
+        function: toggleDarkMode()
+        Purpose: Switches between light and dark themes when toggle button is clicked
+        Method: Adds/removes CSS class and saves preference to localStorage
+        Parameters: None
+        Returns: None
+        */
+        function toggleDarkMode() {
+            // Get references to DOM elements
+            const body = document.body;                              // HTML body element for CSS class manipulation
+            const toggle = document.getElementById('themeToggle');  // Toggle button element
+
+            // Check current theme state - true if dark mode is active
+            const isDark = body.classList.contains('dark');         // Uses CSS class presence to track state
+
+            if (isDark) {
+                // SWITCH TO LIGHT MODE
+                body.classList.remove('dark');          // Remove dark CSS class from body
+                toggle.textContent = '🌙';              // Change icon to moon emoji
+                localStorage.setItem('theme', 'light'); // Save preference to browser storage
+            } else {
+                // SWITCH TO DARK MODE
+                body.classList.add('dark');             // Add dark CSS class to body
+                toggle.textContent = '☀️';              // Change icon to sun emoji
+                localStorage.setItem('theme', 'dark');  // Save preference to browser storage
+            }
+        }
+
+            /*
+        function: showSection(sectionName)
+        Purpose: Handles navigation between different content sections on the page
+        Method: Shows/hides sections and updates navigation link styling
+        Parameters: sectionName - string indicating which section to show ('home', 'time', 'about')
+        Returns: None
+        */
+        function showSection(sectionName) {
+            // Hide all sections first
+            document.getElementById('about-section').style.display = 'none';  // Hide about section
+            document.getElementById('time-section').style.display = 'none';   // Hide time section
+
+            // Remove active class from all navigation links
+            document.getElementById('nav-home').classList.remove('active');
+            document.getElementById('nav-time').classList.remove('active');
+            document.getElementById('nav-about').classList.remove('active');
+
+            // Show the requested section and activate corresponding nav link
+            if (sectionName === 'about') {
+                document.getElementById('about-section').style.display = 'block';
+                document.getElementById('nav-about').classList.add('active');
+            } else if (sectionName === 'time') {
+                document.getElementById('time-section').style.display = 'block';
+                document.getElementById('nav-time').classList.add('active');
+            } else {
+                // Default to home (no section shown)
+                document.getElementById('nav-home').classList.add('active');
+            }
+        }
+
+        /*
+        Event Listener: DOMContentLoaded
+        Purpose: Initialize theme and page state on load
+        Triggers: When HTML document has been completely loaded and parsed
+        */
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // THEME INITIALIZATION
+            // Retrieve saved theme preference from localStorage, default to 'light' if none exists
+            const savedTheme = localStorage.getItem('theme') || 'light';
+
+            // Get toggle button reference
+            const toggle = document.getElementById('themeToggle');
+
+            if (savedTheme === 'dark') {
+                // APPLY DARK THEME ON LOAD
+                document.body.classList.add('dark');    // Add dark CSS class to body
+                toggle.textContent = '☀️';              // Set toggle to show sun icon
+            } else {
+                // APPLY LIGHT THEME ON LOAD
+                toggle.textContent = '🌙';              // Set toggle to show moon icon (already default)
+            }
+
+            // PAGE INITIALIZATION
+            // Set up navigation state - time section shown by default
+            showSection('time');
+        });
+
+    </script>
+</body>
+</html>
