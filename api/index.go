@@ -2,26 +2,25 @@
 package handler
 
 import (
+	"embed"
 	"html/template"
-	"log"
 	"net/http"
-	"path/filepath"
 )
 
-var tmpl = template.Must(template.ParseGlob(filepath.Join("templates", "*.html")))
+//go:embed ../templates/*
+var templateFS embed.FS
+
+var tmpl = template.Must(template.New("").ParseFS(templateFS, "templates/*.html"))
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	// Accept root path in any form Vercel sends it
+	// Accept both "" and "/" – Vercel sometimes sends empty string
 	if r.URL.Path == "/" || r.URL.Path == "" {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		err := tmpl.ExecuteTemplate(w, "layout.html", nil)
-		if err != nil {
-			http.Error(w, "Template error", 500)
-			log.Printf("ExecuteTemplate error: %v", err)
+		if err := tmpl.ExecuteTemplate(w, "layout.html", nil); err != nil {
+			http.Error(w, "template error", 500)
+			return
 		}
 		return
 	}
-
-	// Everything else = 404
 	http.NotFound(w, r)
 }
