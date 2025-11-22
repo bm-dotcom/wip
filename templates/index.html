@@ -38,8 +38,25 @@
       <a href="/">Home</a>
       <a href="/about">About</a>
     </nav>
-    <h1>Welcome Home</h1>
-    <p>This is your real index.html with full styling, served by Go on Vercel.</p>
+    <h1>{{.Title}}</h1>
+    <p>{{.Content}}</p>
+
+    <div class="weather-container">
+      <h2>Forecast</h2>
+      <div class="forecast-grid">
+        {{range .Periods}}
+        <div class="forecast-period">
+          <h3>{{.Name}}</h3>
+          <p>{{.ShortForecast}}</p>
+          <p><strong>{{.Temperature}}°F</strong></p>
+          <p>{{.WindSpeed}}</p>
+        </div>
+        {{end}}
+      </div>
+      {{if not .Periods}}
+      <p style="text-align: center; color: rgba(255,255,255,0.7);">Weather data unavailable. Try different coordinates.</p>
+      {{end}}
+    </div>
   </div>
 </body>
 </html>
