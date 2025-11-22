@@ -1,62 +1,7 @@
-<link rel="stylesheet" href="/style.css">
-
 <!DOCTYPE html>
-<html lang="en">
+<html class="h-full w-full transition-colors duration-300" x-data="{ dark: localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches), init() { this.$watch('dark', value => {
+  localStorage.theme = value ? 'dark' : 'light'
+  document.documentElement.classList.toggle('dark', value)
+}) }, toggle() { this.dark = !this.dark } }" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ .Title }}</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      margin: 0;
-      padding: 40px;
-      min-height: 100vh;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: rgba(255,255,255,0.1);
-      padding: 40px;
-      border-radius: 16px;
-      backdrop-filter: blur(10px);
-    }
-    nav a {
-      color: white;
-      margin-right: 20px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    h1 { font-size: 3rem; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <nav>
-      <a href="/">Home</a>
-      <a href="/about">About</a>
-    </nav>
-    <h1>{{.Title}}</h1>
-    <p>{{.Content}}</p>
-
-    <div class="weather-container">
-      <h2>Forecast</h2>
-      <div class="forecast-grid">
-        {{range .Periods}}
-        <div class="forecast-period">
-          <h3>{{.Name}}</h3>
-          <p>{{.ShortForecast}}</p>
-          <p><strong>{{.Temperature}}°F</strong></p>
-          <p>{{.WindSpeed}}</p>
-        </div>
-        {{end}}
-      </div>
-      {{if not .Periods}}
-      <p style="text-align: center; color: rgba(255,255,255,0.7);">Weather data unavailable. Try different coordinates.</p>
-      {{end}}
-    </div>
-  </div>
-</body>
-</html>
+  <meta charset="UTF
