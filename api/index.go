@@ -5,14 +5,12 @@ import (
 	"html/template"
 	"io/fs"
 	"net/http"
-	"path"
 	"strings"
 )
 
 //go:embed ../templates/*
 var templateFS embed.FS
 
-// Parse templates once at cold start (bulletproof with fs.Sub)
 var templates *template.Template
 
 func init() {
@@ -24,13 +22,15 @@ func init() {
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	// Get clean path (e.g. "", "/", "/about", "/about/")
-	p := strings.TrimSuffix(strings.Trim(r.URL.Path, "/"), "/")
+	// Clean the path
+	p := strings.Trim(r.URL.Path, "/")
+	if p == "" {
+		p = "index"
+	}
 
-	// Map path → template name
 	var tmplName string
 	switch p {
-	case "", "index":
+	case "index", "":
 		tmplName = "index.html"
 	case "about":
 		tmplName = "about.html"
@@ -39,12 +39,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Serve the template (your styling will be fully visible)
-	err := templates.ExecuteTemplate(w, tmplName, map[string]any{
-		"Title": strings.Title(p == "" ? "home" : p),
+	// Fix for the syntax error: no ternary in Go!
+	title := "Home"
+	if p != "" && p != "index" {
+		title = strings.Title(p)
+	}
+
+	err := templates.ExecuteTemplate(w, tmplName, map[string]string{
+		"Title": title,
 	})
 	if err != nil {
-		http.Error(w, "Template error", http.StatusInternalServerError)
+		http.Error(w, "Template error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
