@@ -44,7 +44,6 @@ Functionality:
             --color-light-bg: #FDFDF8;
             --color-dark-bg: #140F0F;
             --color-light-text: #140F0F;
-            --color-dark-text: #FDFDF8;
 
             /* Spacing System - Consistent rhythm (4px base) */
             --space-xs: 0.25rem;    /*  4px */
@@ -100,10 +99,6 @@ Functionality:
             padding: 80px 0 60px 0; /* 5rem top + 3.75rem bottom */
         }
 
-        body.dark {
-            color: var(--color-dark-text);
-            background: var(--color-dark-bg);
-        }
 
         /* ===============================================================================
         LAYOUT COMPONENTS - Fixed Positioning
@@ -122,10 +117,6 @@ Functionality:
             transition: var(--transition-normal);
         }
 
-        body.dark .site-header {
-            background: var(--color-dark-bg);
-            border-bottom-color: rgba(253, 253, 248, 0.1);
-        }
 
         .header-container {
             max-width: 1200px;
@@ -155,10 +146,6 @@ Functionality:
             transition: var(--transition-normal);
         }
 
-        body.dark .site-footer {
-            background: var(--color-dark-bg);
-            border-top-color: rgba(253, 253, 248, 0.1);
-        }
 
         .footer-container {
             max-width: 1200px;
@@ -202,9 +189,6 @@ Functionality:
             color: var(--color-light-text);
         }
 
-        body.dark .message {
-            color: var(--color-dark-text);
-        }
 
         .time {
             font-size: var(--text-lg);
@@ -214,9 +198,6 @@ Functionality:
             margin: var(--space-lg) 0;
         }
 
-        body.dark .time {
-            color: var(--color-dark-text);
-        }
 
         /* ===============================================================================
         INTERACTION COMPONENTS
@@ -243,9 +224,6 @@ Functionality:
             font-size: var(--text-base);
         }
 
-        body.dark .nav-link {
-            color: var(--color-dark-text);
-        }
 
         .nav-link:hover, .nav-link.active {
             background: var(--color-dark-bg);
@@ -253,26 +231,7 @@ Functionality:
             border-color: var(--color-dark-bg);
         }
 
-        body.dark .nav-link:hover, body.dark .nav-link.active {
-            background: var(--color-light-bg);
-            color: var(--color-dark-text);
-            border-color: var(--color-light-bg);
-        }
 
-        /* Dark Mode Toggle */
-        .toggle {
-            background: none;
-            border: none;
-            font-size: var(--text-xl);
-            cursor: pointer;
-            padding: var(--space-xs);
-            transition: var(--transition-fast);
-            color: var(--color-light-text);
-        }
-
-        body.dark .toggle {
-            color: var(--color-dark-text);
-        }
 
         /* ===============================================================================
         CONTENT SECTIONS
@@ -286,9 +245,6 @@ Functionality:
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        body.dark .section {
-            background: rgba(0, 0, 0, 0.05);
-        }
 
         .section h2 {
             font-size: var(--text-3xl);
@@ -298,9 +254,6 @@ Functionality:
             color: var(--color-light-text);
         }
 
-        body.dark .section h2 {
-            color: var(--color-dark-text);
-        }
 
         .time-clock {
             font-size: var(--text-3xl);
@@ -314,10 +267,6 @@ Functionality:
             border: 1px solid rgba(20, 15, 15, 0.08);
         }
 
-        body.dark .time-clock {
-            background: rgba(253, 253, 248, 0.05);
-            border-color: rgba(253, 253, 248, 0.08);
-        }
 
         /* ===============================================================================
         RESPONSIVE DESIGN - Mobile optimization
@@ -382,8 +331,7 @@ Functionality:
     ================================================================================================ -->
     <header class="site-header">
         <div class="header-container">
-            <h1 class="header-title">🚀 Go Webpage</h1>
-            <button class="toggle" onclick="toggleDarkMode()" id="themeToggle" title="Toggle Dark Mode">🌙</button>
+            <h1 class="header-title">Go Webpage</h1>
         </div>
     </header>
 
@@ -393,7 +341,7 @@ Functionality:
     <div class="container">
 
         <!-- LARGE HERO TITLE - with rocket emoji for visual interest -->
-        <h1 class="hero">🚀 Go Webpage</h1>
+        <h1 class="hero">Go Webpage</h1>
 
         <!-- DYNAMIC WELCOME MESSAGE - comes from Go server via {{.Message}} template variable -->
         <p class="message">{{.Message}}</p>
@@ -417,7 +365,7 @@ Functionality:
         <!-- About Section (hidden by default) -->
         <div class="section" id="about-section" style="display: none;">
             <h2>About This Site</h2>
-            <p>This is a simple webpage created with Go and the Fiber web framework. It features light and dark mode, and displays the current server time.</p>
+            <p>This is a simple webpage created with Go and the Fiber web framework. It displays the current server time.</p>
         </div>
 
         <!-- Time Section (shown by default) -->
@@ -450,33 +398,6 @@ Functionality:
     ================================================================================================ -->
     <script>
 
-        /*
-        function: toggleDarkMode()
-        Purpose: Switches between light and dark themes when toggle button is clicked
-        Method: Adds/removes CSS class and saves preference to localStorage
-        Parameters: None
-        Returns: None
-        */
-        function toggleDarkMode() {
-            // Get references to DOM elements
-            const body = document.body;                              // HTML body element for CSS class manipulation
-            const toggle = document.getElementById('themeToggle');  // Toggle button element
-
-            // Check current theme state - true if dark mode is active
-            const isDark = body.classList.contains('dark');         // Uses CSS class presence to track state
-
-            if (isDark) {
-                // SWITCH TO LIGHT MODE
-                body.classList.remove('dark');          // Remove dark CSS class from body
-                toggle.textContent = '🌙';              // Change icon to moon emoji
-                localStorage.setItem('theme', 'light'); // Save preference to browser storage
-            } else {
-                // SWITCH TO DARK MODE
-                body.classList.add('dark');             // Add dark CSS class to body
-                toggle.textContent = '☀️';              // Change icon to sun emoji
-                localStorage.setItem('theme', 'dark');  // Save preference to browser storage
-            }
-        }
 
             /*
         function: showSection(sectionName)
@@ -514,24 +435,6 @@ Functionality:
         Triggers: When HTML document has been completely loaded and parsed
         */
         document.addEventListener('DOMContentLoaded', function() {
-
-            // THEME INITIALIZATION
-            // Retrieve saved theme preference from localStorage, default to 'light' if none exists
-            const savedTheme = localStorage.getItem('theme') || 'light';
-
-            // Get toggle button reference
-            const toggle = document.getElementById('themeToggle');
-
-            if (savedTheme === 'dark') {
-                // APPLY DARK THEME ON LOAD
-                document.body.classList.add('dark');    // Add dark CSS class to body
-                toggle.textContent = '☀️';              // Set toggle to show sun icon
-            } else {
-                // APPLY LIGHT THEME ON LOAD
-                toggle.textContent = '🌙';              // Set toggle to show moon icon (already default)
-            }
-
-            // PAGE INITIALIZATION
             // Set up navigation state - time section shown by default
             showSection('time');
         });

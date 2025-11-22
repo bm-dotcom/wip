@@ -63,12 +63,6 @@ Functionality: Identical to homepage
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* DARK MODE STYLES - Applied when body.dark class is present */
-        body.dark {
-            /* DARK MODE COLORS - exact same color values as homepage */
-            background: #140F0F;  /* Very dark brown background */
-            color: #FDFDF8;       /* Light cream text */
-        }
 
         /* ===============================================================================
         CONTENT CONTAINER - Centered layout with maximum width
@@ -136,12 +130,6 @@ Functionality: Identical to homepage
             transition: all 0.3s ease;
         }
 
-        /* DARK MODE BUTTON COLORS - Inverted colors */
-        body.dark .btn {
-            background: #FDFDF8;   /* Light background */
-            color: #140F0F;        /* Dark text */
-            border-color: #FDFDF8; /* Light border */
-        }
 
         /* BUTTON HOVER EFFECTS - Same as homepage */
         .btn:hover {
@@ -152,31 +140,6 @@ Functionality: Identical to homepage
             transform: translateY(-1px);
         }
 
-        /* ===============================================================================
-        DARK MODE TOGGLE BUTTON - Absolutely positioned top-right corner
-        =============================================================================== */
-        .toggle {
-            /* Position independent of content flow */
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-
-            /* No visible background */
-            background: none;
-            border: none;
-
-            /* Large emoji/icon size */
-            font-size: 1.5rem;
-
-            /* Pointer cursor for clickability */
-            cursor: pointer;
-
-            /* Clickable area padding */
-            padding: 0.5rem;
-
-            /* Smooth transition for icon changes */
-            transition: all 0.3s ease;
-        }
 
         /* ===============================================================================
         FOOTER ATTRIBUTION - Subtle bottom text
@@ -196,21 +159,14 @@ Functionality: Identical to homepage
 </head>
 
 <body>
-    <!-- ================================================================================================
-    DARK MODE TOGGLE BUTTON - Same functionality as homepage
-    ================================================================================================
-    Positioned in top-right corner, calls the same JavaScript toggleDarkMode() function.
-    This ensures theme consistency across all pages.
-    ================================================================================================ -->
-    <button class="toggle" onclick="toggleDarkMode()" id="themeToggle">🌙</button>
 
     <!-- ================================================================================================
     MAIN CONTENT AREA - About page specific content
     ================================================================================================ -->
     <div class="container">
 
-        <!-- PAGE TITLE - with book emoji to indicate informational content -->
-        <h1 class="hero">📖 About</h1>
+        <!-- PAGE TITLE -->
+        <h1 class="hero">About</h1>
 
         <!-- DYNAMIC CONTENT - inserted by Go server via {{.Content}} template variable -->
         <p class="content">{{.Content}}</p>
@@ -232,64 +188,5 @@ Functionality: Identical to homepage
 
     </div>
 
-    <!-- ================================================================================================
-    JAVASCRIPT SECTION - Identical to homepage for theme consistency
-    ================================================================================================
-    This is the EXACT same JavaScript as the homepage to ensure theme synchronization.
-    When user changes theme on one page, it persists when navigating to other pages.
-    ================================================================================================ -->
-    <script>
-
-        /*
-        function: toggleDarkMode()
-        Purpose: Switches between light/dark themes, identical to homepage
-        Method: CSS class manipulation and localStorage persistence
-        Note: This function must be identical on all pages for consistency
-        */
-        function toggleDarkMode() {
-            // Reference DOM elements
-            const body = document.body;                              // Body element for CSS class toggle
-            const toggle = document.getElementById('themeToggle');  // Theme toggle button
-
-            // Check if dark mode is currently active
-            const isDark = body.classList.contains('dark');         // Class-based state tracking
-
-            if (isDark) {
-                // TRANSITION TO LIGHT MODE
-                body.classList.remove('dark');          // Remove dark theme CSS class
-                toggle.textContent = '🌙';              // Display moon icon for light mode
-                localStorage.setItem('theme', 'light'); // Persist preference in browser storage
-            } else {
-                // TRANSITION TO DARK MODE
-                body.classList.add('dark');             // Add dark theme CSS class
-                toggle.textContent = '☀️';              // Display sun icon for dark mode
-                localStorage.setItem('theme', 'dark');  // Persist preference in browser storage
-            }
-        }
-
-        /*
-        Event Listener: DOMContentLoaded
-        Purpose: Applies saved theme preference when page loads
-        Triggers: After HTML document is fully loaded and parsed
-        */
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // Retrieve previously saved theme preference, defaulting to 'light'
-            const savedTheme = localStorage.getItem('theme') || 'light';
-
-            // Get reference to toggle button for icon display
-            const toggle = document.getElementById('themeToggle');
-
-            if (savedTheme === 'dark') {
-                // APPLY DARK THEME FROM STORAGE
-                document.body.classList.add('dark');    // Enable dark mode styling
-                toggle.textContent = '☀️';              // Show sun icon to indicate active dark mode
-            } else {
-                // APPLY LIGHT THEME FROM STORAGE
-                toggle.textContent = '🌙';              // Show moon icon for light mode (default)
-            }
-        });
-
-    </script>
 </body>
 </html>
