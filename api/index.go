@@ -1,7 +1,6 @@
-package handler
+package main
 
 import (
-	"embed"
 	"log"
 	"net/http"
 	"os"
@@ -12,14 +11,11 @@ import (
 	"github.com/gofiber/template/html/v2"
 )
 
-//go:embed ../templates/*
-var templatesFS embed.FS
-
 var app *fiber.App
 var handler http.Handler // global adapted handler (built once)
 
 func init() {
-	engine := html.NewFileSystem(http.FS(templatesFS), ".html")
+	engine := html.NewFileSystem(http.Dir("./templates"), ".html")
 
 	app = fiber.New(fiber.Config{
 		Views: engine,
@@ -35,7 +31,8 @@ func init() {
 
 	app.Get("/about", func(c *fiber.Ctx) error {
 		return c.Render("about", fiber.Map{
-			"Title": "About",
+			"Title":   "About",
+			"Content": "This is a simple webpage created with Go and the Fiber web framework. It displays the current server time.",
 		})
 	})
 
