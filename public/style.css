@@ -1,0 +1,33 @@
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+  margin: 0;
+  padding: 60px 20px;
+  color: #333;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+nav {
+  margin-bottom: 40px;
+}
+
+nav a {
+  color: #ff6b6b;
+  text-decoration: none;
+  font-weight: bold;
+  margin-right: 30px;
+  font-size: 1.2rem;
+}
+
+h1 {
+  font-size: 3.5rem;
+  color: #2c3e50;
+}
