@@ -1,51 +1,46 @@
 package handler
 
 import (
-	"embed"
-	"html/template"
 	"net/http"
-	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-//go:embed templates/*
-var templateFS embed.FS
-
-var router *gin.Engine
-
-func init() {
-	// Use gin.Default() so you get Logger + Recovery middleware for free (very useful in serverless)
-	router = gin.Default()
-
-	// Parse all templates once at cold start
-	tmpl := template.Must(template.ParseFS(templateFS, "templates/*.html"))
-	router.SetHTMLTemplate(tmpl)
-
-	// Catch-all handler (thanks to vercel.json rewrite, every request hits this function)
-	router.NoRoute(func(c *gin.Context) {
-		path := c.Request.URL.Path
-
-		// Normalize path: remove leading/trailing slashes and handle empty
-		cleanPath := strings.Trim(path, "/")
-		if cleanPath == "" {
-			cleanPath = "index"
-		}
-
-		tmplName := cleanPath + ".html"
-
-		// Security: only allow the templates you actually have
-		if tmplName != "index.html" && tmplName != "about.html" {
-			c.String(http.StatusNotFound, "404 page not found")
-			return
-		}
-
-		// If you later pass data to templates, use gin.H{"title": "About"} etc.
-		c.HTML(http.StatusOK, tmplName, nil)
-	})
+type PageData struct {
+	Title   string
+	Message string
+	Time    string
+	Content string
 }
 
-// Vercel Go runtime expects this exact signature
 func Handler(w http.ResponseWriter, r *http.Request) {
+	router := gin.New()
+	router.LoadHTMLGlob("templates/*.html")
+	router.Use(gin.Recovery())
+
+	now := time.Now().Format("Mon Jan 2 15:04:05 MST 2006")
+
+	router.GET("/", func(c *gin.Context) {
+		data := PageData{
+			Title:   "Go Webpage",
+			Message: "Welcome from the Gin-powered Go serverless handler on Vercel!",
+			Time:    now,
+		}
+		c.HTML(http.StatusOK, "index.html", data)
+	})
+
+	router.GET("/about", func(c *gin.Context) {
+		data := PageData{
+			Title:   "About",
+			Content: "This is a simple webpage created with Go, Gin framework, and HTML templates, deployed as serverless function on Vercel.",
+		}
+		c.HTML(http.StatusOK, "about.html", data)
+	})
+
+	router.NoRoute(func(c *gin.Context) {
+		c.String(http.StatusNotFound, "404 - Page Not Found")
+	})
+
 	router.ServeHTTP(w, r)
 }
