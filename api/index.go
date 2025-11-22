@@ -1,8 +1,9 @@
-package main
+package handler
 
 import (
 	"embed"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
