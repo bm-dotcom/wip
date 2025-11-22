@@ -2,46 +2,50 @@ package handler
 
 import (
 	"embed"
-	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
-// Embed all templates at build time (no filesystem access needed at runtime)
-//
 //go:embed templates/*
-var templates embed.FS
+var templateFS embed.FS
 
-var tmpl *template.Template
+var router *gin.Engine
 
-// Parse once at cold start – cheap and safe in serverless
 func init() {
-	var err error
-	tmpl, err = template.New("").ParseFS(templates, "templates/*.html")
-	if err != nil {
-		panic(err)
-	}
-}
+	// Use gin.Default() so you get Logger + Recovery middleware for free (very useful in serverless)
+	router = gin.Default()
 
-func Handler(w http.ResponseWriter, r *http.Request) {
-	path := r.URL.Path
-	if path == "" || path == "/" {
-		path = "/index.html"
-	} else {
-		path = "/" + strings.TrimPrefix(path, "/") + ".html"
-		if path == "/about.html" { // only allow the pages you actually have
-			// ok
-		} else if path != "/index.html" {
-			http.NotFound(w, r)
+	// Parse all templates once at cold start
+	tmpl := template.Must(template.ParseFS(templateFS, "templates/*.html"))
+	router.SetHTMLTemplate(tmpl)
+
+	// Catch-all handler (thanks to vercel.json rewrite, every request hits this function)
+	router.NoRoute(func(c *gin.Context) {
+		path := c.Request.URL.Path
+
+		// Normalize path: remove leading/trailing slashes and handle empty
+		cleanPath := strings.Trim(path, "/")
+		if cleanPath == "" {
+			cleanPath = "index"
+		}
+
+		tmplName := cleanPath + ".html"
+
+		// Security: only allow the templates you actually have
+		if tmplName != "index.html" && tmplName != "about.html" {
+			c.String(http.StatusNotFound, "404 page not found")
 			return
 		}
-	}
 
-	// If you use a layout/base template, change the name below accordingly
-	err := tmpl.ExecuteTemplate(w, strings.TrimPrefix(path, "/"), nil)
-	if err != nil {
-		http.Error(w, "Template error", http.StatusInternalServerError)
-		fmt.Println("template error:", err)
-	}
+		// If you later pass data to templates, use gin.H{"title": "About"} etc.
+		c.HTML(http.StatusOK, tmplName, nil)
+	})
+}
+
+// Vercel Go runtime expects this exact signature
+func Handler(w http.ResponseWriter, r *http.Request) {
+	router.ServeHTTP(w, r)
 }
